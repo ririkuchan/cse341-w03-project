@@ -1,17 +1,27 @@
 const express = require('express');
 const cors = require('cors');
 const { initDb } = require('./data/database');
+const path = require('path');
+
+// Swagger関連
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require(path.join(__dirname, 'swagger.json'));
 
 const app = express();
 
-// ミドルウェア
+// ✅ ミドルウェア
 app.use(cors());
 app.use(express.json());
 
-// ルート
-app.use('/items', require('./routes/items'));
+// ✅ Swaggerの静的ファイルを明示的に提供
+app.use('/api-docs', express.static(path.join(__dirname, 'node_modules', 'swagger-ui-dist')));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-// サーバー起動
+// ✅ APIルート
+app.use('/items', require('./routes/items'));
+app.use('/users', require('./routes/users'));
+
+// ✅ サーバー起動
 const port = process.env.PORT || 3001;
 
 initDb((err) => {
@@ -20,6 +30,7 @@ initDb((err) => {
     } else {
         app.listen(port, () => {
             console.log(`✅ Database is connected. Server is running on port ${port}`);
+            console.log(`📘 Swagger UI available at http://localhost:${port}/api-docs`);
         });
     }
 });
