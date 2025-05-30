@@ -13,8 +13,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ✅ Swaggerの静的ファイルを明示的に提供
-app.use('/api-docs', express.static(path.join(__dirname, 'node_modules', 'swagger-ui-dist')));
+// ✅ Swaggerのルート
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // ✅ APIルート
